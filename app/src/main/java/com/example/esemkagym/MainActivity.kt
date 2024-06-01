@@ -1,7 +1,9 @@
 package com.example.esemkagym
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -20,11 +22,14 @@ class MainActivity : AppCompatActivity() {
 
     private var email: String = ""
     private var password: String = ""
+    private lateinit var sharedPref : SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        sharedPref = getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
 
         binding.progressBar.visibility = View.GONE
         binding.btnSignIn.setOnClickListener {
@@ -83,6 +88,11 @@ class MainActivity : AppCompatActivity() {
                             val jsonResponse = JSONObject(response.toString())
 
                             println("Response : $jsonResponse")
+
+                            with(sharedPref.edit()){
+                                putString("TOKEN", jsonResponse["token"].toString())
+                                apply()
+                            }
 
                             startActivity(Intent(this@MainActivity, DailyCheckinActivity::class.java))
                         }
