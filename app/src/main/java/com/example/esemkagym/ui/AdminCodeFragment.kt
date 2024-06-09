@@ -1,31 +1,38 @@
-package com.example.esemkagym
+package com.example.esemkagym.ui
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.esemkagym.databinding.ActivityAdminCodeBinding
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.example.esemkagym.databinding.FragmentAdminCodeBinding
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-class AdminCodeActivity : AppCompatActivity() {
+class AdminCodeFragment : Fragment() {
+    private var _binding: FragmentAdminCodeBinding? = null
 
-    private lateinit var binding: ActivityAdminCodeBinding
-    private lateinit var sharedPref: SharedPreferences
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAdminCodeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentAdminCodeBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+        return root
+    }
 
-        sharedPref = getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var sharedPref = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
 
         val token = sharedPref.getString("TOKEN", "")
 
@@ -34,6 +41,11 @@ class AdminCodeActivity : AppCompatActivity() {
         val date = sharedPref.getString("DATE", "")
 
         binding.tvDate.text = date
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun getCheckInCode (bearerToken: String) {

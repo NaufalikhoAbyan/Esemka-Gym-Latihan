@@ -105,8 +105,9 @@ class MainActivity : AppCompatActivity() {
                                 apply()
                             }
 
-                            val intent = Intent(this@MainActivity, AdminCodeActivity::class.java)
+                            val intent = Intent(this@MainActivity, AdminDashbardActivity::class.java)
                             startActivity(intent)
+                            finish()
                         }
                     } else {
                         runOnUiThread {

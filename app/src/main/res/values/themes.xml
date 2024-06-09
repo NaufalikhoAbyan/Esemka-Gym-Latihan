@@ -2,8 +2,17 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.EsemkaGym" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-         <item name="colorPrimary">@color/esemka_red</item>
+        <item name="colorPrimary">@color/esemka_red</item>
     </style>
 
     <style name="Theme.EsemkaGym" parent="Base.Theme.EsemkaGym" />
+
+    <style name="Theme.EsemkaGym.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.EsemkaGym.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.EsemkaGym.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
