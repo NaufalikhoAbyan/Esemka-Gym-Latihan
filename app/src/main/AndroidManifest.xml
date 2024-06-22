@@ -21,11 +21,7 @@
             android:name=".AdminDashbardActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_dashbard"
-            android:theme="@style/Theme.EsemkaGym.NoActionBar">
-        </activity>
-        <activity
-            android:name=".AdminCodeActivity"
-            android:exported="false" />
+            android:theme="@style/Theme.EsemkaGym.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">

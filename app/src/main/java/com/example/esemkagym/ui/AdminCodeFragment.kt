@@ -19,6 +19,8 @@ class AdminCodeFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    var token: String? = ""
+    var jsonResponse: JSONObject = JSONObject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,9 +34,13 @@ class AdminCodeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
         var sharedPref = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
 
-        val token = sharedPref.getString("TOKEN", "")
+        token = sharedPref.getString("TOKEN", "")
 
         getCheckInCode(token!!)
 
@@ -43,39 +49,37 @@ class AdminCodeFragment : Fragment() {
         binding.tvDate.text = date
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     private fun getCheckInCode (bearerToken: String) {
         val url = URL("http://10.0.2.2:8081/api/attendance/checkin/code")
         val thread = Thread {
             try {
-                with(url.openConnection() as HttpURLConnection){
+                with(url.openConnection() as HttpURLConnection) {
                     requestMethod = "GET"
 
                     setRequestProperty("Authorization", "Bearer $bearerToken")
 
                     println("Code: $responseCode")
 
-                    BufferedReader(InputStreamReader(inputStream)).use{
+                    BufferedReader(InputStreamReader(inputStream)).use {
                         val response = StringBuffer()
 
                         var inputLine = it.readLine()
-                        while(inputLine != null) {
+                        while (inputLine != null) {
                             response.append(inputLine)
                             inputLine = it.readLine()
                         }
 
                         it.close()
 
-                        val jsonResponse = JSONObject(response.toString())
+                        jsonResponse = JSONObject(response.toString())
                         println("Response: $jsonResponse")
 
-                        binding.tvCode.text = jsonResponse["code"].toString()
+                        this@AdminCodeFragment.requireActivity().runOnUiThread {
+                            binding.tvCode.text = jsonResponse["code"].toString()
+                        }
                     }
                 }
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }

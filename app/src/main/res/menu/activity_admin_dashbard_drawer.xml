@@ -3,11 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="all">
         <item
             android:id="@+id/nav_adminCode"
             android:icon="@drawable/baseline_home_24"
             android:title="Daily Checkin Code" />
+
+        <item
+            android:id="@+id/nav_manage_members"
+            android:icon="@drawable/baseline_account_box_24"
+            android:title="Manage Members" />
 
     </group>
 </menu>
