@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="esemka_red">#B33805</color>
     <color name="esemka_white">#F8ECE7</color>
+    <color name="esemka_grey">#808080</color>
 </resources>
