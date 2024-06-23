@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,17 +45,19 @@ class ActiveMemberFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = ActiveMemberAdapter(activeMembers)
         binding.rvActiveMember.layoutManager = LinearLayoutManager(requireContext())
+        adapter = ActiveMemberAdapter(activeMembers)
         binding.rvActiveMember.adapter = adapter
+
+        adapter.notifyDataSetChanged()
 
         sharedPref = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         val token = sharedPref.getString("TOKEN", "")
 
-        getActiveMembers(token!!, "")
 
         binding.etSearch.doOnTextChanged { text, start, before, count ->
-            getActiveMembers(token, text.toString())
+            activeMembers.clear()
+            getActiveMembers(token!!, text.toString())
         }
     }
 
@@ -85,7 +86,9 @@ class ActiveMemberFragment : Fragment() {
                         jsonResponse = JSONArray(response.toString())
                         println("URL: $url")
                         println("Response: $jsonResponse")
-                        getActiveMembersList(jsonResponse)
+                        requireActivity().runOnUiThread {
+                            getActiveMembersList(jsonResponse)
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -96,15 +99,19 @@ class ActiveMemberFragment : Fragment() {
     }
 
     private fun getActiveMembersList(jsonArray: JSONArray){
-        activeMembers = mutableListOf()
-        for(i in 0 until jsonArray.length()){
-            val jsonObject = JSONObject(jsonArray[i].toString())
-            val name = jsonObject["name"]
-            val date = jsonObject["membershipEnd"]
-            activeMembers.add(ActiveMember(name.toString(), date.toString()))
+        if (jsonArray.length() != 0){
+            for(i in 0 until jsonArray.length()){
+                val jsonObject = JSONObject(jsonArray[i].toString())
+                val name = jsonObject["name"]
+                val date = jsonObject["membershipEnd"]
+                activeMembers.add(ActiveMember(name.toString(), date.toString()))
+                adapter.notifyDataSetChanged()
+            }
+        }else{
+            activeMembers.clear()
+            adapter.notifyDataSetChanged()
         }
-        adapter = ActiveMemberAdapter(activeMembers)
-        binding.rvActiveMember.adapter = adapter
-        println(activeMembers)
+
+        Log.d("Active Members : ", activeMembers.toString())
     }
 }
