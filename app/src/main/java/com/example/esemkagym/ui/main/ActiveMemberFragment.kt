@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,6 +34,8 @@ class ActiveMemberFragment : Fragment() {
 
     private var activeMembers: MutableList<ActiveMember> = mutableListOf()
 
+    private var token = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -52,13 +55,23 @@ class ActiveMemberFragment : Fragment() {
         adapter.notifyDataSetChanged()
 
         sharedPref = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("TOKEN", "")
+        token = sharedPref.getString("TOKEN", "").toString()
 
 
         binding.etSearch.doOnTextChanged { text, start, before, count ->
-            activeMembers.clear()
-            getActiveMembers(token!!, text.toString())
+            populateView(text.toString())
         }
+
+        adapter.setOnClickListener(object: ActiveMemberAdapter.OnClickListener {
+            override fun onItemClick(position: Int, item: ActiveMember) {
+                resumeMembership(item.id)
+            }
+        })
+    }
+
+    private fun populateView(text: String){
+        activeMembers.clear()
+        getActiveMembers(token!!, text)
     }
 
     private fun getActiveMembers(token: String, name: String) {
@@ -102,9 +115,10 @@ class ActiveMemberFragment : Fragment() {
         if (jsonArray.length() != 0){
             for(i in 0 until jsonArray.length()){
                 val jsonObject = JSONObject(jsonArray[i].toString())
+                val id = jsonObject["id"]
                 val name = jsonObject["name"]
                 val date = jsonObject["membershipEnd"]
-                activeMembers.add(ActiveMember(name.toString(), date.toString()))
+                activeMembers.add(ActiveMember(id.toString(), name.toString(), date.toString()))
                 adapter.notifyDataSetChanged()
             }
         }else{
@@ -113,5 +127,25 @@ class ActiveMemberFragment : Fragment() {
         }
 
         Log.d("Active Members : ", activeMembers.toString())
+    }
+
+    private fun resumeMembership(id: String) {
+        val url = URL("http://10.0.2.2:8081/api/member/$id/resume")
+
+        val thread = Thread{
+            with(url.openConnection() as HttpURLConnection) {
+                requestMethod = "PUT"
+
+                setRequestProperty("Authorization", "Bearer $token")
+                println("Response Code: $responseCode")
+                if (responseCode == 200){
+                    requireActivity().runOnUiThread {
+                        populateView(binding.etSearch.text.toString())
+                        Toast.makeText(requireContext(), "Membership berhasil diperpanjang", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+        thread.start()
     }
 }

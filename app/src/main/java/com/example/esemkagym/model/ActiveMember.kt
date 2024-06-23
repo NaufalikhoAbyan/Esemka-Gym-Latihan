@@ -1,3 +1,3 @@
 package com.example.esemkagym.model
 
-data class ActiveMember(val name: String, val date: String)
+data class ActiveMember(val id: String, val name: String, val date: String)
