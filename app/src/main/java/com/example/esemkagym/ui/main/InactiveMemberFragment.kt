@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.esemkagym.adapter.ActiveMemberAdapter
-import com.example.esemkagym.databinding.FragmentActiveMemberBinding
+import com.example.esemkagym.adapter.InactiveMemberAdapter
+import com.example.esemkagym.databinding.FragmentInactiveMemberBinding
 import com.example.esemkagym.model.Member
 import org.json.JSONArray
 import org.json.JSONObject
@@ -21,19 +21,18 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
-class ActiveMemberFragment : Fragment() {
-    private var _binding: FragmentActiveMemberBinding? = null
+class InactiveMemberFragment : Fragment() {
+    private var _binding: FragmentInactiveMemberBinding? = null
 
     private val binding get() = _binding!!
 
-    private lateinit var adapter: ActiveMemberAdapter
+    private lateinit var adapter: InactiveMemberAdapter
+
+    private val inactiveMembers: MutableList<Member> = mutableListOf()
+
+    private var jsonResponse = JSONArray()
 
     private lateinit var sharedPref: SharedPreferences
-
-    var jsonResponse: JSONArray = JSONArray()
-
-    private var activeMembers: MutableList<Member> = mutableListOf()
-
     private var token = ""
 
     override fun onCreateView(
@@ -41,41 +40,38 @@ class ActiveMemberFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentActiveMemberBinding.inflate(inflater, container, false)
+        _binding = FragmentInactiveMemberBinding.inflate(inflater, container, false)
         val root = binding.root
         return root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvActiveMember.layoutManager = LinearLayoutManager(requireContext())
-        adapter = ActiveMemberAdapter(activeMembers)
-        binding.rvActiveMember.adapter = adapter
-
-        adapter.notifyDataSetChanged()
+        binding.rvInactiveMember.layoutManager = LinearLayoutManager(requireContext())
+        adapter = InactiveMemberAdapter(inactiveMembers)
+        binding.rvInactiveMember.adapter = adapter
 
         sharedPref = requireActivity().getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE)
         token = sharedPref.getString("TOKEN", "").toString()
-
 
         binding.etSearch.doOnTextChanged { text, start, before, count ->
             populateView(text.toString())
         }
 
-        adapter.setOnClickListener(object: ActiveMemberAdapter.OnClickListener {
-            override fun onItemClick(position: Int, item: Member) {
+        adapter.setOnclickListener(object: InactiveMemberAdapter.OnClickListener {
+            override fun onClick(item: Member) {
                 resumeMembership(item.id)
             }
         })
     }
 
     private fun populateView(text: String){
-        activeMembers.clear()
-        getActiveMembers(token!!, text)
+        inactiveMembers.clear()
+        getInactiveMember(token!!, text)
     }
 
-    private fun getActiveMembers(token: String, name: String) {
-        val url = URL("http://10.0.2.2:8081/api/member?status=ACTIVE&name=$name")
+    private fun getInactiveMember(token: String, name: String) {
+        val url = URL("http://10.0.2.2:8081/api/member?status=INACTIVE&name=$name")
         val thread = Thread {
             try {
                 with(url.openConnection() as HttpURLConnection){
@@ -100,7 +96,7 @@ class ActiveMemberFragment : Fragment() {
                         println("URL: $url")
                         println("Response: $jsonResponse")
                         requireActivity().runOnUiThread {
-                            getActiveMembersList(jsonResponse)
+                            getInactiveMembersList(jsonResponse)
                         }
                     }
                 }
@@ -111,26 +107,26 @@ class ActiveMemberFragment : Fragment() {
         thread.start()
     }
 
-    private fun getActiveMembersList(jsonArray: JSONArray){
+    private fun getInactiveMembersList(jsonArray: JSONArray){
         if (jsonArray.length() != 0){
             for(i in 0 until jsonArray.length()){
                 val jsonObject = JSONObject(jsonArray[i].toString())
                 val id = jsonObject["id"]
                 val name = jsonObject["name"]
                 val date = jsonObject["membershipEnd"]
-                activeMembers.add(Member(id.toString(), name.toString(), date.toString()))
+                inactiveMembers.add(Member(id.toString(), name.toString(), date.toString()))
                 adapter.notifyDataSetChanged()
             }
         }else{
-            activeMembers.clear()
+            inactiveMembers.clear()
             adapter.notifyDataSetChanged()
         }
 
-        Log.d("Active Members : ", activeMembers.toString())
+        Log.d("Active Members : ", inactiveMembers.toString())
     }
 
     private fun resumeMembership(id: String) {
-        val url = URL("http://10.0.2.2:8081/api/member/$id/resume")
+        val url = URL("http://10.0.2.2:8081/api/member/$id/approve")
 
         val thread = Thread{
             with(url.openConnection() as HttpURLConnection) {
@@ -141,7 +137,7 @@ class ActiveMemberFragment : Fragment() {
                 if (responseCode == 200){
                     requireActivity().runOnUiThread {
                         populateView(binding.etSearch.text.toString())
-                        Toast.makeText(requireContext(), "Membership berhasil diperpanjang", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Membership berhasil diperbarui", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

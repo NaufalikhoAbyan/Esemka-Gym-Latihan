@@ -6,15 +6,15 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.esemkagym.R
-import com.example.esemkagym.databinding.ActiveMemberItemBinding
-import com.example.esemkagym.model.ActiveMember
+import com.example.esemkagym.databinding.MemberItemBinding
+import com.example.esemkagym.model.Member
 import java.time.LocalDate
 
-class ActiveMemberAdapter(private val activeMember: List<ActiveMember>): RecyclerView.Adapter<ActiveMemberAdapter.ActiveMemberHolder>() {
-    class ActiveMemberHolder(private val binding: ActiveMemberItemBinding): RecyclerView.ViewHolder(binding.root){
-        fun bind(activeMember: ActiveMember) {
-            binding.tvActiveMemberName.text = activeMember.name
-            binding.tvMemberUntil.text = activeMember.date
+class ActiveMemberAdapter(private val activeMember: List<Member>): RecyclerView.Adapter<ActiveMemberAdapter.ActiveMemberHolder>() {
+    class ActiveMemberHolder(private val binding: MemberItemBinding): RecyclerView.ViewHolder(binding.root){
+        fun bind(activeMember: Member) {
+            binding.tvMemberName.text = activeMember.name
+            binding.tvDate.text = activeMember.date
             val today = LocalDate.now()
             val threshold = LocalDate.parse(activeMember.date).minusDays(7)
             binding.tvResume.isVisible = today >= threshold
@@ -22,7 +22,7 @@ class ActiveMemberAdapter(private val activeMember: List<ActiveMember>): Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ActiveMemberHolder {
-        val binding = ActiveMemberItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = MemberItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ActiveMemberHolder(binding)
     }
 
@@ -38,7 +38,7 @@ class ActiveMemberAdapter(private val activeMember: List<ActiveMember>): Recycle
     }
 
     interface OnClickListener {
-        fun onItemClick(position: Int, item: ActiveMember)
+        fun onItemClick(position: Int, item: Member)
     }
 
     private var onClickListener: OnClickListener? = null
