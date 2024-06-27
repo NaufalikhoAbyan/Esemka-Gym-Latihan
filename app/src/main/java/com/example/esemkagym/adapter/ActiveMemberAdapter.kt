@@ -17,7 +17,7 @@ class ActiveMemberAdapter(private val activeMember: List<Member>): RecyclerView.
             binding.tvDate.text = activeMember.date
             val today = LocalDate.now()
             val threshold = LocalDate.parse(activeMember.date).minusDays(7)
-            binding.tvResume.isVisible = today >= threshold
+            binding.tvButton.isVisible = today >= threshold
         }
     }
 
@@ -32,7 +32,7 @@ class ActiveMemberAdapter(private val activeMember: List<Member>): RecyclerView.
 
     override fun onBindViewHolder(holder: ActiveMemberHolder, position: Int) {
         holder.bind(activeMember[position])
-        holder.itemView.findViewById<TextView>(R.id.tvResume).setOnClickListener {
+        holder.itemView.findViewById<TextView>(R.id.tvButton).setOnClickListener {
             onClickListener?.onItemClick(position, activeMember[position])
         }
     }

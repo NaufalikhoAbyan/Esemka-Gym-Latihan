@@ -27,7 +27,7 @@ class InactiveMemberAdapter(private val inactiveMember: List<Member>): RecyclerV
 
     override fun onBindViewHolder(holder: InactiveMemberHolder, position: Int) {
         holder.bind(inactiveMember[position])
-        holder.itemView.findViewById<TextView>(R.id.tvResume).setOnClickListener {
+        holder.itemView.findViewById<TextView>(R.id.tvButton).setOnClickListener {
             onClickListener?.onClick(inactiveMember[position])
         }
     }
