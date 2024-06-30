@@ -14,5 +14,10 @@
             android:icon="@drawable/baseline_account_box_24"
             android:title="Manage Members" />
 
+        <item
+            android:id="@+id/nav_report"
+            android:icon="@drawable/baseline_insert_chart_24"
+            android:title="Report" />
+
     </group>
 </menu>

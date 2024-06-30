@@ -18,10 +18,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".RegisteredActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminDashbardActivity"
             android:exported="false"
             android:label="@string/title_activity_admin_dashbard"
-            android:theme="@style/Theme.EsemkaGym.NoActionBar"/>
+            android:theme="@style/Theme.EsemkaGym.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

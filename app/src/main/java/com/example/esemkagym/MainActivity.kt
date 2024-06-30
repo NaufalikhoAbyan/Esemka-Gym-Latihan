@@ -53,6 +53,11 @@ class MainActivity : AppCompatActivity() {
                 sendLoginData(email, password)
             }
         }
+
+        binding.tvSignUp.setOnClickListener {
+            val intent = Intent(this@MainActivity, SignUpActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun sendLoginData (email: String, password: String) {
