@@ -110,9 +110,20 @@ class MainActivity : AppCompatActivity() {
                                 apply()
                             }
 
-                            val intent = Intent(this@MainActivity, AdminDashbardActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                            if(jsonUserData["admin"] == true) {
+                                val intent = Intent(this@MainActivity, AdminDashbardActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                            } else {
+                                if(!jsonUserData["joinedMemberAt"].equals(null)) {
+                                    val intent = Intent(this@MainActivity, CheckInActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                } else {
+                                    val intent = Intent(this@MainActivity, RegisteredActivity::class.java)
+                                    startActivity(intent)
+                                }
+                            }
                         }
                     } else {
                         runOnUiThread {
