@@ -97,4 +97,11 @@
         android:background="@color/black"
         android:layout_gravity="center"/>
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="com.example.esemkagym.ui.AttendanceFragment"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>

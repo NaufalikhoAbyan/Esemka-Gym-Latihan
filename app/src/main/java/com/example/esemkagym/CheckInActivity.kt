@@ -3,11 +3,10 @@ package com.example.esemkagym
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.esemkagym.databinding.ActivityCheckInBinding
 import java.net.HttpURLConnection
 import java.net.URL
@@ -75,6 +74,7 @@ class CheckInActivity : AppCompatActivity() {
                 if (responseCode == 200) {
                     runOnUiThread {
                         binding.btnCheckIn.isEnabled = false
+                        binding.btnCheckIn.backgroundTintList = ColorStateList.valueOf(Color.TRANSPARENT)
                     }
                 }
             }
