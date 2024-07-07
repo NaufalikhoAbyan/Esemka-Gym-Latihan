@@ -145,6 +145,6 @@ class PendingMemberFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
-        Log.d("Active Members : ", pendingMembers.toString())
+        Log.d("Pending Members : ", pendingMembers.toString())
     }
 }

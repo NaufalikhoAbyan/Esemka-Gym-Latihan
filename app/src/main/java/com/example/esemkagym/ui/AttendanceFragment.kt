@@ -101,7 +101,10 @@ class AttendanceFragment : Fragment() {
                 val jsonObject = JSONObject(jsonArray[i].toString())
                 val checkIn = jsonObject["checkIn"]
                 val checkOut = jsonObject["checkOut"]
-                attendances.add(MemberAttendance(checkIn.toString(), checkOut.toString()))
+                val user = jsonArray.getJSONObject(i).getJSONObject("user")
+                val gender = user["gender"]
+                val name = user["name"]
+                attendances.add(MemberAttendance(gender.toString(), name.toString(), checkIn.toString(), checkOut.toString()))
                 adapter.notifyDataSetChanged()
             }
         }else{
@@ -109,7 +112,7 @@ class AttendanceFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
-        Log.d("Active Members : ", attendances.toString())
+        Log.d("Attendance Data : ", attendances.toString())
     }
 
     override fun onDestroyView() {

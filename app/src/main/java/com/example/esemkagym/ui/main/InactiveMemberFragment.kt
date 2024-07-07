@@ -122,7 +122,7 @@ class InactiveMemberFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
 
-        Log.d("Active Members : ", inactiveMembers.toString())
+        Log.d("Inactive Members : ", inactiveMembers.toString())
     }
 
     private fun resumeMembership(id: String) {
